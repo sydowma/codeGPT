@@ -1,6 +1,7 @@
 import os
 import shutil
 import tarfile
+import time
 
 import openai
 import requests
@@ -133,6 +134,9 @@ class AnalysisRepository:
                     messages=messages,
                 )
                 outputs.append(response['choices'][0]['message']['content'])
+            except openai.error.ServiceUnavailableError:
+                print(f"Skipping a chunk due to service unavailable")
+                time.sleep(1000)
             except openai.error.InvalidRequestError as e:
                 if "maximum context length" in str(e):
                     print(f"Skipping a chunk due to token limit exceeded: {e}")
