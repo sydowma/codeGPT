@@ -19,14 +19,12 @@ mv env.example .env
 ```shell
 OPENAI_API_KEY=sk-xxxxxxxxxxxxx
 ```
-3. change code repository name in `analysis_repository.py`
-
-4. run `analysis_repository.py` file
+3. run `main.py` file
 ```shell
-python analysis_repository.py
+python main.py LMAX-Exchange/disruptor
 ```
 
 ## feature list
+- [x] command line
 - [] generate markdown book
-- [] command line
 - [] offline version

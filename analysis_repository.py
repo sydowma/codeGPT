@@ -27,7 +27,7 @@ class GitHubClient:
 
         if self.token:
             self.headers['Authorization'] = f'token {self.token}'
-        self.init_environment()
+        self.init_environment(self.download_dir)
 
     def get_repo(self, repo, is_private=False, branch="master"):
         if is_private:
@@ -37,17 +37,19 @@ class GitHubClient:
         response = requests.get(api_url, headers=self.headers, stream=True)
 
         if response.status_code == 200:
-            repo_name = repo.replace('/', '_')
+            repo_parent_path = os.path.join(self.download_dir, repo.split('/')[0])
+            self.init_environment(repo_parent_path)
             tar_file_path = os.path.join(self.download_dir, f"{repo.replace('/', '_')}.tar.gz")
             with open(tar_file_path, 'wb') as f:
                 response.raw.decode_content = True
                 shutil.copyfileobj(response.raw, f)
-            self._extract_tar_file(tar_file_path, self.download_dir)
+            self._extract_tar_file(tar_file_path, repo_parent_path)
         else:
-            print(f'Failed to download: {response.content.decode()}')
+            print(f'Failed to download: {response.content.decode()}'
+                  f'request: {api_url}')
 
-    def init_environment(self):
-        download_dir = os.path.join(self.download_dir)
+    def init_environment(self, dir_path):
+        download_dir = os.path.join(dir_path)
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
 
