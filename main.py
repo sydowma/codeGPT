@@ -10,7 +10,7 @@ app = typer.Typer()
 
 
 @app.command()
-def main(repo_path: str, is_private: str = 'false', branch: str = "master"):
+def analysis(repo_path: str, is_private: str = 'false', branch: str = "master"):
     client_public = analysis_repository.GitHubClient(url="https://api.github.com")
     is_private = is_private.lower() == 'true'
     client_public.get_repo(repo_path, is_private=is_private,

@@ -87,7 +87,14 @@ class AnalysisRepository:
                     full_path = os.path.join(root, filename)
                     content = self.read_file(full_path)
                     explanation = self.generate_explanation(filename, content)
-                    file_content = explanation + "\n\n" + content
+                    file_content = f'''{explanation}
+                    
+
+```java
+{content}
+```
+                    '''
+                    print(f'Explanations for {filename} explanation')
                     output_dir = os.path.join(root).removeprefix("./downloaded_sources/")
                     output_dir = os.path.join(output_root_dir, output_dir)
                     self.init_environment(output_dir)
