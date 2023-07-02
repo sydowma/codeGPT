@@ -85,6 +85,14 @@ class AnalysisRepository:
                     continue
                 if filename.endswith('.java'):
                     full_path = os.path.join(root, filename)
+
+                    output_dir = os.path.join(root).removeprefix("./downloaded_sources/")
+                    output_dir = os.path.join(output_root_dir, output_dir)
+                    self.init_environment(output_dir)
+                    output_filename = os.path.join(output_dir, filename + '.md')
+                    if os.path.exists(output_filename):
+                        print(f'skip Explanations for {filename} explanation')
+                        continue
                     content = self.read_file(full_path)
                     explanation = self.generate_explanation(filename, content)
                     file_content = f'''{explanation}
@@ -95,10 +103,6 @@ class AnalysisRepository:
 ```
                     '''
                     print(f'Explanations for {filename} explanation')
-                    output_dir = os.path.join(root).removeprefix("./downloaded_sources/")
-                    output_dir = os.path.join(output_root_dir, output_dir)
-                    self.init_environment(output_dir)
-                    output_filename = os.path.join(output_dir, filename + '.md')
                     self.write_to_file(output_filename, file_content)
 
     def read_files_in_dir(self, dir_path, filename_suffix=".py"):
@@ -114,17 +118,27 @@ class AnalysisRepository:
         messages = [
             {"role": "system", "content": "You are a helpful assistant that explains code."},
         ]
-        content_parts = [content[i:i + max_length] for i in range(0, len(content), max_length)]
-        for part in content_parts:
+        tokenized_content = content.split()  # simple split by spaces, consider better tokenization
+        MAX_TOKENS = 4096 - 256 - 32
+        outputs = []
+
+        for i in range(0, len(tokenized_content), MAX_TOKENS):
+            chunk = " ".join(tokenized_content[i:i + MAX_TOKENS])
             messages.append(
-                {"role": "user", "content": f"Explain the following code from {filename}:\n{part}\n"})
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                # As of the time of writing this, GPT-4 hasn't been released yet. Please replace with the latest model
-                messages=messages,
-            )
-            explanation_parts.append(response['choices'][0]['message']['content'])
-        return '\n'.join(explanation_parts)
+                {"role": "user", "content": f"Explain the following code from {filename}:\n{chunk}\n"})
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    # As of the time of writing this, GPT-4 hasn't been released yet. Please replace with the latest model
+                    messages=messages,
+                )
+                outputs.append(response['choices'][0]['message']['content'])
+            except openai.error.InvalidRequestError as e:
+                if "maximum context length" in str(e):
+                    print(f"Skipping a chunk due to token limit exceeded: {e}")
+                else:
+                    raise e
+        return " ".join(outputs)
 
     def ask(self):
         # Read all Python files in the directory
