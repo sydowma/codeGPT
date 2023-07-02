@@ -87,12 +87,12 @@ class AnalysisRepository:
                     full_path = os.path.join(root, filename)
                     content = self.read_file(full_path)
                     explanation = self.generate_explanation(filename, content)
-                    print(f"\nExplanation for {filename}:\n{explanation}")
+                    file_content = explanation + "\n\n" + content
                     output_dir = os.path.join(root).removeprefix("./downloaded_sources/")
                     output_dir = os.path.join(output_root_dir, output_dir)
                     self.init_environment(output_dir)
                     output_filename = os.path.join(output_dir, filename + '.md')
-                    self.write_to_file(output_filename, explanation)
+                    self.write_to_file(output_filename, file_content)
 
     def read_files_in_dir(self, dir_path, filename_suffix=".py"):
         file_contents = {}

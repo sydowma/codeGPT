@@ -178,3 +178,5 @@ cython_debug/
 downloaded_sources/
 explanations/
 .DS_Store
+
+book/

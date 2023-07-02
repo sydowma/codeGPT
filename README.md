@@ -19,12 +19,17 @@ mv env.example .env
 ```shell
 OPENAI_API_KEY=sk-xxxxxxxxxxxxx
 ```
-3. run `main.py` file
+3. generate markdown file
 ```shell
 python main.py LMAX-Exchange/disruptor
 ```
 
+4. generate markdown book
+```shell
+python main.py book ./explanations/disruptor-master
+```
+
 ## feature list
 - [x] command line
-- [] generate markdown book
-- [] offline version
+- [x] generate markdown book
+- [ ] offline version

@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 import typer
 import analysis_repository
+import book_generator
 
 app = typer.Typer()
 
@@ -22,6 +23,12 @@ def main(repo_path: str, is_private: str = 'false', branch: str = "master"):
     dir_path = os.path.join("./downloaded_sources/", repo_path + "-" + branch)
     analysis = analysis_repository.AnalysisRepository(dir_path=dir_path)
     analysis.ask()
+
+
+@app.command()
+def book(input_dir: str, output_dir: str = "./book", project_name: str = "MyProject"):
+    # Generate a book from the explanations
+    book_generator.generate_sphinx_project(input_dir, output_dir, project_name)
 
 
 if __name__ == "__main__":
