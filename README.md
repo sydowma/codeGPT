@@ -25,3 +25,8 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxx
 ```shell
 python analysis_repository.py
 ```
+
+## feature list
+- [] generate markdown book
+- [] command line
+- [] offline version
