@@ -22,7 +22,7 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxx
 3. generate markdown file
 ```shell
 # default file type is java
-python main.py LMAX-Exchange/disruptor
+python main.py analyse LMAX-Exchange/disruptor
 
 # filer python file
 # python main.py LMAX-Exchange/disruptor --file-extension py
