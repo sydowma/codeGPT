@@ -62,8 +62,9 @@ class GitHubClient:
 
 class AnalysisRepository:
 
-    def __init__(self, dir_path):
+    def __init__(self, dir_path, file_extension):
         self.dir_path = dir_path
+        self.file_extension = "." + file_extension
 
     def init_environment(self, dir_path):
         dir_path = os.path.join(dir_path)
@@ -84,7 +85,7 @@ class AnalysisRepository:
             for filename in files:
                 if 'test' in filename or 'Test' in filename:
                     continue
-                if filename.endswith('.java'):
+                if filename.endswith(self.file_extension):
                     full_path = os.path.join(root, filename)
 
                     output_dir = os.path.join(root).removeprefix("./downloaded_sources/")
@@ -160,5 +161,5 @@ if __name__ == "__main__":
     # client_private = GitHubClient(url="https://api.github.com", token="your_github_token")
     # client_private.get_repo("username/private-repo")  # replace with the private repo you want to download
 
-    analysis = AnalysisRepository(dir_path="./downloaded_sources/disruptor-master")
+    analysis = AnalysisRepository(dir_path="./downloaded_sources/disruptor-master", file_extension='java')
     analysis.ask()

@@ -10,7 +10,7 @@ app = typer.Typer()
 
 
 @app.command()
-def analysis(repo_path: str, is_private: str = 'false', branch: str = "master"):
+def analysis(repo_path: str, is_private: str = 'false', branch: str = 'master', file_extension='java'):
     client_public = analysis_repository.GitHubClient(url="https://api.github.com")
     is_private = is_private.lower() == 'true'
     client_public.get_repo(repo_path, is_private=is_private,
@@ -21,8 +21,8 @@ def analysis(repo_path: str, is_private: str = 'false', branch: str = "master"):
     # client_private.get_repo("username/private-repo")  # replace with the private repo you want to download
 
     dir_path = os.path.join("./downloaded_sources/", repo_path + "-" + branch)
-    analysis = analysis_repository.AnalysisRepository(dir_path=dir_path)
-    analysis.ask()
+    analysis_repo = analysis_repository.AnalysisRepository(dir_path=dir_path, file_extension=file_extension)
+    analysis_repo.ask()
 
 
 @app.command()
