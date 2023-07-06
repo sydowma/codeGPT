@@ -62,9 +62,10 @@ class GitHubClient:
 
 class AnalysisRepository:
 
-    def __init__(self, dir_path, file_extension):
+    def __init__(self, dir_path, file_extension, language):
         self.dir_path = dir_path
         self.file_extension = "." + file_extension
+        self.promotion = self.get_promotion_by_language(language)
 
     def init_environment(self, dir_path):
         dir_path = os.path.join(dir_path)
@@ -118,7 +119,7 @@ class AnalysisRepository:
     def generate_explanation(self, filename, content, max_length=4096):
         explanation_parts = []
         messages = [
-            {"role": "system", "content": "You are a helpful assistant that explains code."},
+            {"role": "system", "content": self.promotion},
         ]
         tokenized_content = content.split()  # simple split by spaces, consider better tokenization
         MAX_TOKENS = 4096 - 256 - 32
@@ -149,6 +150,12 @@ class AnalysisRepository:
         # Read all Python files in the directory
         # Generate an explanation for each file
         self.explain_python_files_in_dir(self.dir_path, output_root_dir="./explanations")
+
+    def get_promotion_by_language(self, language):
+        if language == 'zh':
+            return "你是一个帮助解释代码的助手，请帮我分析一下这段代码。"
+        else:
+            return "You are a helpful assistant that explains code."
 
 
 if __name__ == "__main__":
